@@ -1,4 +1,7 @@
 package clancode.excepciones;
 
-public class ClienteYaExisteException {
+public class ClienteYaExisteException extends Exception {
+    public ClienteYaExisteException(String mensaje) {
+        super(mensaje);
+    }
 }

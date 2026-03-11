@@ -1,4 +1,7 @@
 package clancode.excepciones;
 
-public class ArticuloNoEncontradoException {
+public class ArticuloNoEncontradoException extends Exception {
+    public ArticuloNoEncontradoException(String mensaje) {
+        super(mensaje);
+    }
 }

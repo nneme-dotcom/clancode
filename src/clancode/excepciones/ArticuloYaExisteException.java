@@ -1,4 +1,7 @@
 package clancode.excepciones;
 
-public class ArticuloYaExisteException {
+public class ArticuloYaExisteException extends Exception {
+    public ArticuloYaExisteException(String mensaje) {
+        super(mensaje);
+    }
 }
