@@ -39,6 +39,7 @@ public class Tienda {
         articulos.put(articulo.getCodigo(), articulo);
     }
 
+
     public Articulo buscarArticulo(String codigo) throws ArticuloNoEncontradoException {
         Articulo a = articulos.get(codigo);
         if (a == null) {
