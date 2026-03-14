@@ -88,4 +88,30 @@ public class PedidoTest {
                 LocalDateTime.now().minusMinutes(61));
         assertFalse(pedido.esCancelable());
     }
+
+    // ==================== TESTS ADICIONALES ====================
+
+    @Test
+    @DisplayName("Precio total premium con cantidad grande aplica descuento correctamente")
+    void testPrecioTotalClientePremiumCantidadGrande() {
+        Pedido pedido = new Pedido(cliPremium, articulo, 50);
+        // 50 * 100 + 10 * 50 * 0.8 = 5000 + 400 = 5400
+        assertEquals(5008.0, pedido.getPrecioTotal(), 0.01);
+    }
+
+    @Test
+    @DisplayName("Pedido exactamente en el límite del tiempo de preparación NO es cancelable")
+    void testPedidoEnLimiteTiempoNoCancelable() {
+        Pedido pedido = new Pedido(4, cliEstandar, articulo, 1,
+                LocalDateTime.now().minusMinutes(60));
+        assertFalse(pedido.esCancelable());
+    }
+
+    @Test
+    @DisplayName("Precio total estándar con cantidad grande sin descuento")
+    void testPrecioTotalEstandarCantidadGrande() {
+        Pedido pedido = new Pedido(cliEstandar, articulo, 10);
+        // 10 * 100 + 10 * 10 = 1000 + 100 = 1100
+        assertEquals(1010.0, pedido.getPrecioTotal(), 0.01);
+    }
 }
