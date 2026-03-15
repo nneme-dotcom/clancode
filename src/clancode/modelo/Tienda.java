@@ -30,7 +30,15 @@ public class Tienda {
     }
 
     // ==================== ARTÍCULOS ====================
-
+    /**
+     * Añade un nuevo artículo al inventario de la tienda.
+     * Los artículos se identifican por código único.
+     *
+     * @param articulo el objeto Articulo a añadir
+     * @throws ArticuloYaExisteException si ya existe un artículo con ese código
+     *
+     * Nota: El código del artículo es inmutable y se usa como clave en el HashMap
+     */
     public void añadirArticulo(Articulo articulo) throws ArticuloYaExisteException {
         if (articulos.containsKey(articulo.getCodigo())) {
             throw new ArticuloYaExisteException(
@@ -39,6 +47,15 @@ public class Tienda {
         articulos.put(articulo.getCodigo(), articulo);
     }
 
+    /**
+     * Busca un artículo en la tienda por su código.
+     *
+     * @param codigo el código único del artículo a buscar
+     * @return el objeto Articulo si existe
+     * @throws ArticuloNoEncontradoException si el código no existe en la tienda
+     *
+     * @example buscarArticulo("A001") retorna el artículo con código A001
+     */
     public Articulo buscarArticulo(String codigo) throws ArticuloNoEncontradoException {
         Articulo a = articulos.get(codigo);
         if (a == null) {
@@ -62,7 +79,16 @@ public class Tienda {
         }
         clientes.put(key, cliente);
     }
-
+    /**
+     * Busca un cliente en la tienda por su email.
+     * Los emails son únicos y se usan como identificador principal.
+     *
+     * @param email el email del cliente a buscar
+     * @return el objeto Cliente si existe (puede ser ClienteEstandar o ClientePremium)
+     * @throws ClienteNoEncontradoException si el email no está registrado
+     *
+     * @example buscarCliente("ana@test.com") retorna el objeto Cliente correspondiente
+     */
     public Cliente buscarCliente(String email) throws ClienteNoEncontradoException {
         Cliente c = clientes.get(email.toLowerCase());
         if (c == null) {
@@ -123,7 +149,15 @@ public class Tienda {
                 .filter(Pedido::esCancelable)
                 .collect(Collectors.toList());
     }
-
+    /**
+     * Retorna todos los pedidos asociados a un cliente específico.
+     *
+     * @param email el email del cliente
+     * @return una List con todos los pedidos del cliente
+     * @throws ClienteNoEncontradoException si el email no existe
+     *
+     * Nota: Este método filtra los pedidos iterando la ListaGenerica
+     */
     public List<Pedido> getPedidosPendientesPorCliente(String emailCliente) {
         return pedidos.getLista().stream()
                 .filter(p -> p.esCancelable()
@@ -136,7 +170,15 @@ public class Tienda {
                 .filter(p -> !p.esCancelable())
                 .collect(Collectors.toList());
     }
-
+    /**
+     * Retorna todos los pedidos asociados a un cliente específico.
+     *
+     * @param email el email del cliente
+     * @return una List con todos los pedidos del cliente
+     * @throws ClienteNoEncontradoException si el email no existe
+     *
+     * Nota: Este método filtra los pedidos iterando la ListaGenerica
+     */
     public List<Pedido> getPedidosEnviadosPorCliente(String emailCliente) {
         return pedidos.getLista().stream()
                 .filter(p -> !p.esCancelable()
