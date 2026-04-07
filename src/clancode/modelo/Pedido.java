@@ -55,4 +55,8 @@ public class Pedido {
                 cantidad, getPrecioTotal(), fechaHora.format(fmt),
                 esCancelable() ? "Pendiente de envío" : "Enviado");
     }
+
+    public boolean pedidoEnviado() {
+        return !esCancelable();
+    }
 }

@@ -1,103 +1,85 @@
 package clancode.controlador;
 
-import clancode.excepciones.*;
 import clancode.modelo.*;
-
+import clancode.excepciones.*;
 import java.util.List;
+import java.time.LocalDateTime;
 
-/**
- * Controlador único de la aplicación.
- * Actúa como puente entre la Vista y el Modelo.
- * La Vista SOLO interactúa con esta clase.
- */
 public class Controlador {
-
     private Tienda tienda;
 
     public Controlador() {
+        // Al instanciar la tienda, se activan los DAOs y la conexión a MySQL
         this.tienda = new Tienda();
     }
 
-    // ==================== ARTÍCULOS ====================
+    // ================= GESTIÓN DE ARTÍCULOS =================
 
-    public void añadirArticulo(String codigo, String descripcion,
-                               double precio, double gastos, int tiempo)
-            throws ArticuloYaExisteException {
-        Articulo articulo = new Articulo(codigo, descripcion, precio, gastos, tiempo);
+    public void añadirArticulo(String codigo, String descripcion, double precio, double gastosEnvio, int tiempoPreparacion) throws ArticuloYaExisteException {
+        Articulo articulo = new Articulo(codigo, descripcion, precio, gastosEnvio, tiempoPreparacion);
         tienda.añadirArticulo(articulo);
     }
 
-    public List<Articulo> getArticulos() {
-        return tienda.getArticulos();
+    public List<Articulo> listarArticulos() {
+        return tienda.getListaArticulos();
     }
 
-    // ==================== CLIENTES ====================
+    // ================= GESTIÓN DE CLIENTES =================
 
-    public void añadirClienteEstandar(String nombre, String domicilio,
-                                      String nif, String email)
-            throws ClienteYaExisteException {
-        Cliente cliente = new ClienteEstandar(nombre, domicilio, nif, email);
+    public void añadirCliente(String nombre, String domicilio, String nif, String email, String tipo) throws ClienteYaExisteException {
+        Cliente cliente;
+        if (tipo.equalsIgnoreCase("Premium")) {
+            cliente = new ClientePremium(nombre, domicilio, nif, email);
+        } else {
+            cliente = new ClienteEstandar(nombre, domicilio, nif, email);
+        }
         tienda.añadirCliente(cliente);
     }
 
-    public void añadirClientePremium(String nombre, String domicilio,
-                                     String nif, String email)
-            throws ClienteYaExisteException {
-        Cliente cliente = new ClientePremium(nombre, domicilio, nif, email);
-        tienda.añadirCliente(cliente);
+    public List<Cliente> listarClientes() {
+        return tienda.getListaClientes();
     }
 
-    public Cliente buscarClienteONull(String email) {
-        return tienda.buscarClienteONull(email);
+    public List<Cliente> listarClientesEstandar() {
+        return tienda.getClientesEstandard();
     }
 
-    public List<Cliente> getClientes() {
-        return tienda.getClientes();
-    }
-
-    public List<Cliente> getClientesEstandar() {
-        return tienda.getClientesEstandar();
-    }
-
-    public List<Cliente> getClientesPremium() {
+    public List<Cliente> listarClientesPremium() {
         return tienda.getClientesPremium();
     }
 
-    // ==================== PEDIDOS ====================
+    // ================= GESTIÓN DE PEDIDOS =================
 
-    public void añadirPedido(String emailCliente, String codigoArticulo, int cantidad)
-            throws ArticuloNoEncontradoException, ClienteNoEncontradoException {
-        Cliente cliente = tienda.buscarCliente(emailCliente);
-        Articulo articulo = tienda.buscarArticulo(codigoArticulo);
-        Pedido pedido = new Pedido(cliente, articulo, cantidad);
+    public void añadirPedido(String emailCliente, String codigoArticulo, int cantidad) throws Exception {
+        // 1. Buscamos el cliente y el artículo para crear el objeto Pedido
+        Cliente cliente = tienda.getListaClientes().stream()
+                .filter(c -> c.getEmail().equals(emailCliente))
+                .findFirst()
+                .orElseThrow(() -> new Exception("Cliente no encontrado"));
+
+        Articulo articulo = tienda.getListaArticulos().stream()
+                .filter(a -> a.getCodigo().equals(codigoArticulo))
+                .findFirst()
+                .orElseThrow(() -> new Exception("Artículo no encontrado"));
+
+        // 2. Creamos el pedido con la fecha y hora actual
+        // El número de pedido se generará automáticamente en la base de datos (Auto-increment)
+        Pedido pedido = new Pedido(0, cliente, articulo, cantidad, LocalDateTime.now());
+        
+        // 3. Lo mandamos a la tienda para que el DAO lo inserte (Paso 9: Transacciones)
         tienda.añadirPedido(pedido);
     }
 
-    public void añadirPedidoConCliente(Cliente cliente, String codigoArticulo, int cantidad)
-            throws ArticuloNoEncontradoException {
-        Articulo articulo = tienda.buscarArticulo(codigoArticulo);
-        Pedido pedido = new Pedido(cliente, articulo, cantidad);
-        tienda.añadirPedido(pedido);
-    }
-
-    public void eliminarPedido(int numeroPedido)
-            throws PedidoNoEncontradoException, PedidoNoCancelableException {
+    public void eliminarPedido(int numeroPedido) throws PedidoNoEncontradoException, PedidoNoCancelableException {
+        // Llama a la tienda, que a su vez llama al Procedimiento Almacenado (Paso 9)
         tienda.eliminarPedido(numeroPedido);
     }
 
-    public List<Pedido> getPedidosPendientes() {
+    public List<Pedido> listarPedidosPendientes() {
         return tienda.getPedidosPendientes();
     }
 
-    public List<Pedido> getPedidosPendientesPorCliente(String email) {
-        return tienda.getPedidosPendientesPorCliente(email);
-    }
-
-    public List<Pedido> getPedidosEnviados() {
+    public List<Pedido> listarPedidosEnviados() {
         return tienda.getPedidosEnviados();
-    }
-
-    public List<Pedido> getPedidosEnviadosPorCliente(String email) {
-        return tienda.getPedidosEnviadosPorCliente(email);
     }
 }
