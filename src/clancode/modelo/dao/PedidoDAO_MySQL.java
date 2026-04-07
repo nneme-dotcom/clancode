@@ -45,5 +45,41 @@ public class PedidoDAO_MySQL implements DAO<Pedido, Integer> {
 
     // ... Implementar obtener y obtenerTodos siguiendo la lógica de reconstrucción de objetos
     @Override public Pedido obtener(Integer id) throws Exception { return null; }
-    @Override public List<Pedido> obtenerTodos() throws Exception { return new ArrayList<>(); }
+    @Override public List<Pedido> obtenerTodos() throws Exception {List<Pedido> lista = new ArrayList<>();
+    String sql = "SELECT * FROM pedidos";
+    
+    // Necesitamos los otros DAOs para buscar al cliente y al artículo por su ID/Email
+    ClienteDAO_MySQL clienteDAO = new ClienteDAO_MySQL();
+    ArticuloDAO_MySQL articuloDAO = new ArticuloDAO_MySQL();
+
+    try (Connection conn = ConexionBD.conectar();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            // 1. Extraemos los IDs de la base de datos
+            String emailCliente = rs.getString("cliente_email");
+            String codigoArticulo = rs.getString("articulo_codigo");
+
+            // 2. Buscamos los objetos completos usando los otros DAOs
+            Cliente cliente = clienteDAO.obtener(emailCliente);
+            Articulo articulo = articuloDAO.obtener(codigoArticulo);
+
+            // 3. Creamos el objeto Pedido con el constructor completo (el que viste en tu imagen 5e9860)
+            Pedido pedido = new Pedido(
+                rs.getInt("numero_pedido"),
+                cliente,
+                articulo,
+                rs.getInt("cantidad"),
+                rs.getTimestamp("fecha_hora").toLocalDateTime()
+            );
+            
+            lista.add(pedido);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw new Exception("Error al obtener los pedidos de la base de datos");
+    }
+    return lista;
+    }
 }

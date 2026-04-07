@@ -1,8 +1,10 @@
 package clancode.controlador;
 
 import clancode.modelo.*;
+import clancode.modelo.dao.ClienteDAO_MySQL;
 import clancode.excepciones.*;
 import java.util.List;
+import java.util.Scanner;
 import java.time.LocalDateTime;
 
 public class Controlador {
@@ -55,7 +57,34 @@ public class Controlador {
         Cliente cliente = tienda.getListaClientes().stream()
                 .filter(c -> c.getEmail().equals(emailCliente))
                 .findFirst()
-                .orElseThrow(() -> new Exception("Cliente no encontrado"));
+                .orElse(null); // Si no lo encuentra, devuelve null en vez de dar error
+
+        // 2. Si el cliente no existe, lo creamos y lo añadimos a la tienda
+        if (cliente == null) {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("--- Cliente nuevo detectado. Por favor, introduzca sus datos ---");
+
+            System.out.print("Nombre: ");
+            String nombre = sc.nextLine();
+
+            System.out.print("Domicilio: ");
+            String domicilio = sc.nextLine();
+
+            System.out.print("NIF: ");
+            String nif = sc.nextLine();
+
+            System.out.print("¿Es cliente Premium? (S/N): ");
+            String esPremium = sc.nextLine().equalsIgnoreCase("S") ? "Premium" : "Estandar";
+
+            // Llamas a tu método de Gestión de Clientes que ya tienes hecho
+            this.añadirCliente(nombre, domicilio, nif, emailCliente, esPremium);
+
+            // Ahora recuperamos el objeto recién creado para el pedido
+            cliente = tienda.getListaClientes().stream()
+                .filter(c -> c.getEmail().equals(emailCliente))
+                .findFirst()
+                .get();
+        }
 
         Articulo articulo = tienda.getListaArticulos().stream()
                 .filter(a -> a.getCodigo().equals(codigoArticulo))
@@ -82,4 +111,5 @@ public class Controlador {
     public List<Pedido> listarPedidosEnviados() {
         return tienda.getPedidosEnviados();
     }
+    
 }

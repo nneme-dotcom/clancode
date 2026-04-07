@@ -57,7 +57,8 @@ public class Pedido {
     }
 
     public boolean pedidoEnviado() {
-        //TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'pedidoEnviado'");
+    // Un pedido está enviado si ya ha pasado su tiempo de preparación
+    LocalDateTime limite = fechaHora.plusMinutes(articulo.getTiempoPreparacion());
+    return LocalDateTime.now().isAfter(limite);
     }
 }
