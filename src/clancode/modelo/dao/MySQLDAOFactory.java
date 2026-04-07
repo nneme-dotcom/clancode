@@ -1,8 +1,8 @@
 package clancode.modelo.dao;
 
-import clancode.modelo.Articulo; // Añade este
-import clancode.modelo.Cliente;  // Añade este
-import clancode.modelo.Pedido;   // ESTE ES EL QUE FALTA
+import clancode.modelo.Articulo;
+import clancode.modelo.Cliente; 
+import clancode.modelo.Pedido;  
 
 public class MySQLDAOFactory implements DAOFactory {
     

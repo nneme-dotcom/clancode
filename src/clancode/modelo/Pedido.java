@@ -12,7 +12,7 @@ public class Pedido {
     private int cantidad;
     private LocalDateTime fechaHora;
 
-    // Constructor completo (útil para tests JUnit)
+    // Constructor completo
     public Pedido(int numeroPedido, Cliente cliente, Articulo articulo,
                   int cantidad, LocalDateTime fechaHora) {
         this.numeroPedido = numeroPedido;

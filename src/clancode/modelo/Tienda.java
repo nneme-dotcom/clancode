@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Tienda {
-    // Capa de persistencia delegada a los DAOs (Paso 4)
+    // Capa de persistencia delegada a los DAOs
     private DAO<Articulo, String> articuloDAO;
     private DAO<Cliente, String> clienteDAO;
     private DAO<Pedido, Integer> pedidoDAO;
 
     public Tienda() {
-        // Uso del patrón Factory para independencia del almacén de datos (Paso 5)
+        // Uso del patrón Factory para independencia del almacén de datos
         DAOFactory factory = new MySQLDAOFactory();
         
         this.articuloDAO = factory.getArticuloDAO();

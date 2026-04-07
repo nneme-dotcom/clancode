@@ -13,10 +13,10 @@ public class PedidoDAO_MySQL implements DAO<Pedido, Integer> {
         Connection conn = null;
         try {
             conn = ConexionBD.conectar();
-            conn.setAutoCommit(false); // PASO 9: Transacción
+            conn.setAutoCommit(false);
 
             String sql = "INSERT INTO pedidos (cliente_email, articulo_codigo, cantidad, fecha_hora) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) { // PASO 8: Seguridad
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, p.getCliente().getEmail());
                 ps.setString(2, p.getArticulo().getCodigo());
                 ps.setInt(3, p.getCantidad());
@@ -34,7 +34,6 @@ public class PedidoDAO_MySQL implements DAO<Pedido, Integer> {
 
     @Override
     public void eliminar(Integer id) throws SQLException {
-        // PASO 9: Procedimiento Almacenado
         String sql = "{ call eliminarPedido(?) }"; 
         try (Connection conn = ConexionBD.conectar(); 
              CallableStatement cs = conn.prepareCall(sql)) {
@@ -43,8 +42,31 @@ public class PedidoDAO_MySQL implements DAO<Pedido, Integer> {
         }
     }
 
-    // ... Implementar obtener y obtenerTodos siguiendo la lógica de reconstrucción de objetos
-    @Override public Pedido obtener(Integer id) throws Exception { return null; }
+    // Implementar obtener y obtenerTodos siguiendo la lógica de reconstrucción de objetos
+   @Override
+    public Pedido obtener(Integer id) throws Exception {
+        String sql = "SELECT * FROM pedidos WHERE numero_pedido = ?";
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Usa la misma lógica que en obtenerTodos para buscar cliente y artículo
+                    Cliente cliente = new ClienteDAO_MySQL().obtener(rs.getString("cliente_email"));
+                    Articulo articulo = new ArticuloDAO_MySQL().obtener(rs.getString("articulo_codigo"));
+                    
+                    return new Pedido(
+                        rs.getInt("numero_pedido"),
+                        cliente,
+                        articulo,
+                        rs.getInt("cantidad"),
+                        rs.getTimestamp("fecha_hora").toLocalDateTime()
+                    );
+                }
+            }
+        }
+    return null;
+}
     @Override public List<Pedido> obtenerTodos() throws Exception {List<Pedido> lista = new ArrayList<>();
     String sql = "SELECT * FROM pedidos";
     
@@ -60,12 +82,13 @@ public class PedidoDAO_MySQL implements DAO<Pedido, Integer> {
             // 1. Extraemos los IDs de la base de datos
             String emailCliente = rs.getString("cliente_email");
             String codigoArticulo = rs.getString("articulo_codigo");
-
+            
+            
             // 2. Buscamos los objetos completos usando los otros DAOs
             Cliente cliente = clienteDAO.obtener(emailCliente);
             Articulo articulo = articuloDAO.obtener(codigoArticulo);
 
-            // 3. Creamos el objeto Pedido con el constructor completo (el que viste en tu imagen 5e9860)
+            // 3. Creamos el objeto Pedido con el constructor completo
             Pedido pedido = new Pedido(
                 rs.getInt("numero_pedido"),
                 cliente,
