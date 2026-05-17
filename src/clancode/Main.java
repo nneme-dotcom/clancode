@@ -1,10 +1,14 @@
 package clancode;
 
-import clancode.vista.Menu;
-
+/**
+ * Punto de entrada legacy de la aplicación (Productos 1–4, versión consola).
+ *
+ * Para el Producto 5 (interfaz gráfica JavaFX), el punto de entrada es MainApp.
+ * Esta clase se mantiene para no romper la compatibilidad con entregas anteriores;
+ * simplemente redirige a MainApp.
+ */
 public class Main {
     public static void main(String[] args) {
-        Menu menu = new Menu();
-        menu.iniciar();
+        MainApp.main(args);
     }
 }

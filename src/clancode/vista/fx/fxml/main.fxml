@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+
+<!--
+    main.fxml — Ventana principal de la aplicación Online Store.
+
+    Estructura:
+      BorderPane
+        ├─ center: TabPane con tres pestañas (Artículos, Clientes, Pedidos).
+        │          El contenido de cada pestaña se carga con FXMLLoader desde
+        │          su propio archivo fxml, inyectado por MainController.
+        └─ bottom: Barra de estado con el indicador de modo BD.
+
+    Controlador: clancode.vista.fx.controllers.MainController
+-->
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="clancode.vista.fx.controllers.MainController"
+            style="-fx-background-color: #f4f6f9;">
+
+    <center>
+        <!-- TabPane principal: una pestaña por sección funcional -->
+        <TabPane fx:id="tabPane"
+                 tabClosingPolicy="UNAVAILABLE"
+                 style="-fx-tab-min-width: 150px; -fx-font-size: 13px;">
+            <BorderPane.margin>
+                <Insets top="10" right="10" bottom="0" left="10"/>
+            </BorderPane.margin>
+
+            <Tab fx:id="tabArticulos" text="📦  Artículos"/>
+            <Tab fx:id="tabClientes"  text="👤  Clientes"/>
+            <Tab fx:id="tabPedidos"   text="🛒  Pedidos"/>
+        </TabPane>
+    </center>
+
+    <bottom>
+        <!-- Barra de estado: MainController la actualiza según el modo de persistencia -->
+        <HBox fx:id="barraEstado"
+              alignment="CENTER_RIGHT"
+              style="-fx-background-color: #ecf0f1;
+                     -fx-border-color: #bdc3c7;
+                     -fx-border-width: 1 0 0 0;">
+            <padding><Insets top="4" right="14" bottom="6" left="14"/></padding>
+            <Label fx:id="lblEstadoBD" text="● Verificando conexión..."/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

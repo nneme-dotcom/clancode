@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<!--
+    clientes.fxml — Pestaña de gestión de clientes.
+
+    Layout:
+      VBox
+        ├─ Label (título)
+        ├─ TitledPane "Nuevo Cliente"
+        │    └─ GridPane  (nombre, domicilio, NIF, email, tipo Estándar/Premium)
+        │         └─ HBox (botones Añadir / Limpiar)
+        ├─ HBox (filtros: Todos / Estándar / Premium)
+        └─ TableView (lista de clientes)
+
+    Controlador: clancode.vista.fx.controllers.ClientesController
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="clancode.vista.fx.controllers.ClientesController"
+      spacing="16"
+      style="-fx-background-color: #f4f6f9;">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <Label text="Gestión de Clientes"
+           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+    <!-- Formulario de alta -->
+    <TitledPane text="Nuevo Cliente" expanded="true" collapsible="true">
+        <GridPane hgap="12" vgap="10">
+            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+
+            <Label text="Nombre:"    GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField fx:id="txtNombre"    GridPane.columnIndex="1" GridPane.rowIndex="0"
+                       promptText="Nombre completo" prefWidth="220"/>
+
+            <Label text="Domicilio:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField fx:id="txtDomicilio" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                       promptText="Calle, número..." prefWidth="220"/>
+
+            <Label text="NIF:"       GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <TextField fx:id="txtNif"       GridPane.columnIndex="1" GridPane.rowIndex="2"
+                       promptText="12345678A" prefWidth="220"/>
+
+            <Label text="Email:"     GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <TextField fx:id="txtEmail"     GridPane.columnIndex="1" GridPane.rowIndex="3"
+                       promptText="correo@ejemplo.com" prefWidth="220"/>
+
+            <Label text="Tipo:"      GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <!-- Los RadioButton comparten ToggleGroup definido en el controlador -->
+            <HBox spacing="14" alignment="CENTER_LEFT"
+                  GridPane.columnIndex="1" GridPane.rowIndex="4">
+                <RadioButton fx:id="rbEstandar" text="Estándar" selected="true"/>
+                <RadioButton fx:id="rbPremium"  text="Premium"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT"
+                  GridPane.columnIndex="1" GridPane.rowIndex="5">
+                <Button text="➕ Añadir Cliente"
+                        onAction="#onAñadirCliente"
+                        style="-fx-background-color: #27ae60; -fx-text-fill: white;
+                               -fx-font-weight: bold; -fx-padding: 8 18;"/>
+                <Button text="🗑 Limpiar"
+                        onAction="#onLimpiar"
+                        style="-fx-padding: 8 14;"/>
+            </HBox>
+        </GridPane>
+    </TitledPane>
+
+    <!-- Botones de filtro rápido -->
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Label text="Mostrar: "/>
+        <Button fx:id="btnTodos"    text="Todos"    onAction="#onFiltroTodos"
+                style="-fx-padding: 6 16; -fx-background-color: #2980b9; -fx-text-fill: white;"/>
+        <Button fx:id="btnEstandar" text="Estándar" onAction="#onFiltroEstandar"
+                style="-fx-padding: 6 16;"/>
+        <Button fx:id="btnPremium"  text="Premium"  onAction="#onFiltroPremium"
+                style="-fx-padding: 6 16;"/>
+    </HBox>
+
+    <!-- Tabla de clientes -->
+    <TableView fx:id="tablaClientes" prefHeight="250"
+               style="-fx-background-color: white;">
+        <placeholder><Label text="No hay clientes registrados."/></placeholder>
+        <columns>
+            <TableColumn fx:id="colEmail"     text="Email"     prefWidth="200"/>
+            <TableColumn fx:id="colNombre"    text="Nombre"    prefWidth="150"/>
+            <TableColumn fx:id="colNif"       text="NIF"       prefWidth="100"/>
+            <TableColumn fx:id="colDomicilio" text="Domicilio" prefWidth="160"/>
+            <TableColumn fx:id="colTipo"      text="Tipo"      prefWidth="80"/>
+        </columns>
+        <VBox.vgrow>ALWAYS</VBox.vgrow>
+    </TableView>
+
+</VBox>

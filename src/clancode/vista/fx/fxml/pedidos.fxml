@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<!--
+    pedidos.fxml — Pestaña de gestión de pedidos.
+
+    Layout:
+      VBox
+        ├─ Label (título)
+        ├─ TitledPane "Nuevo Pedido"
+        │    └─ GridPane  (email cliente, código artículo, cantidad)
+        │         ├─ Label informativo del cliente (lblInfoCliente)
+        │         └─ HBox (botones Crear / Limpiar)
+        ├─ TitledPane "Eliminar Pedido" (colapsado por defecto)
+        │    └─ HBox  (campo número + botón eliminar)
+        ├─ VBox  filtros
+        │    ├─ HBox  (Todos / Pendientes / Enviados)
+        │    └─ HBox  (campo email + Filtrar + Limpiar)
+        └─ TableView (lista de pedidos)
+
+    Controlador: clancode.vista.fx.controllers.PedidosController
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="clancode.vista.fx.controllers.PedidosController"
+      spacing="16"
+      style="-fx-background-color: #f4f6f9;">
+    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+    <Label text="Gestión de Pedidos"
+           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+    <!-- Formulario nuevo pedido -->
+    <TitledPane text="Nuevo Pedido" expanded="true" collapsible="true">
+        <GridPane hgap="12" vgap="10">
+            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+
+            <Label text="Email cliente:"   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField fx:id="txtEmailPedido"  GridPane.columnIndex="1" GridPane.rowIndex="0"
+                       promptText="Email del cliente registrado" prefWidth="220"
+                       onAction="#onEmailFocusLost"/>
+
+            <!-- Label de feedback: muestra nombre del cliente al escribir el email -->
+            <Label fx:id="lblInfoCliente" text=""
+                   GridPane.columnIndex="1" GridPane.rowIndex="1"
+                   style="-fx-text-fill: #7f8c8d; -fx-font-style: italic;"/>
+
+            <Label text="Código artículo:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <TextField fx:id="txtCodigoPedido" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                       promptText="Código del artículo" prefWidth="220"/>
+
+            <Label text="Cantidad:"        GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <TextField fx:id="txtCantidad" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                       promptText="1" prefWidth="220"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT"
+                  GridPane.columnIndex="1" GridPane.rowIndex="4">
+                <Button text="🛒 Crear Pedido"
+                        onAction="#onCrearPedido"
+                        style="-fx-background-color: #8e44ad; -fx-text-fill: white;
+                               -fx-font-weight: bold; -fx-padding: 8 18;"/>
+                <Button text="🗑 Limpiar"
+                        onAction="#onLimpiarPedido"
+                        style="-fx-padding: 8 14;"/>
+            </HBox>
+        </GridPane>
+    </TitledPane>
+
+    <!-- Formulario eliminar (colapsado para no saturar la pantalla) -->
+    <TitledPane text="Eliminar Pedido (solo si está pendiente)"
+                expanded="false" collapsible="true">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+            <Label text="Número de pedido:"/>
+            <TextField fx:id="txtNumeroPedido" promptText="Nº de pedido" prefWidth="120"/>
+            <Button text="🗑 Eliminar Pedido"
+                    onAction="#onEliminarPedido"
+                    style="-fx-background-color: #e74c3c; -fx-text-fill: white;
+                           -fx-font-weight: bold; -fx-padding: 8 16;"/>
+        </HBox>
+    </TitledPane>
+
+    <!-- Filtros de estado y por cliente -->
+    <VBox spacing="8">
+        <!-- Filtro por estado -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="Estado: "/>
+            <Button fx:id="btnTodos"      text="Todos"      onAction="#onFiltroTodos"
+                    style="-fx-padding: 6 14; -fx-background-color: #2980b9; -fx-text-fill: white;"/>
+            <Button fx:id="btnPendientes" text="Pendientes" onAction="#onFiltroPendientes"
+                    style="-fx-padding: 6 14;"/>
+            <Button fx:id="btnEnviados"   text="Enviados"   onAction="#onFiltroEnviados"
+                    style="-fx-padding: 6 14;"/>
+        </HBox>
+        <!-- Filtro por email de cliente -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <Label text="Cliente: "/>
+            <TextField fx:id="txtFiltroEmail"
+                       promptText="Filtrar por email de cliente (opcional)"
+                       prefWidth="260"/>
+            <Button text="🔍 Filtrar"
+                    onAction="#onFiltrarEmail"
+                    style="-fx-padding: 5 12;"/>
+            <Button text="✕"
+                    onAction="#onLimpiarFiltroEmail"
+                    style="-fx-padding: 5 10;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Tabla de pedidos -->
+    <TableView fx:id="tablaPedidos" prefHeight="230"
+               style="-fx-background-color: white;">
+        <placeholder><Label text="No hay pedidos en esta categoría."/></placeholder>
+        <columns>
+            <TableColumn fx:id="colNumero"   text="Nº"        prefWidth="55"/>
+            <TableColumn fx:id="colCliente"  text="Cliente"   prefWidth="160"/>
+            <TableColumn fx:id="colArticulo" text="Artículo"  prefWidth="180"/>
+            <TableColumn fx:id="colCantidad" text="Cant."     prefWidth="55"/>
+            <TableColumn fx:id="colTotal"    text="Total (€)" prefWidth="90"/>
+            <TableColumn fx:id="colFecha"    text="Fecha"     prefWidth="130"/>
+            <TableColumn fx:id="colEstado"   text="Estado"    prefWidth="110"/>
+        </columns>
+        <VBox.vgrow>ALWAYS</VBox.vgrow>
+    </TableView>
+
+</VBox>
