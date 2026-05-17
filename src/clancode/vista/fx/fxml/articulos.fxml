@@ -79,8 +79,4 @@
             <TableColumn fx:id="colPrecio"      text="Precio (€)"    prefWidth="100"/>
             <TableColumn fx:id="colGastos"      text="Envío (€)"     prefWidth="100"/>
             <TableColumn fx:id="colTiempo"      text="Prep. (min)"   prefWidth="100"/>
-        </columns>
-        <VBox.vgrow>ALWAYS</VBox.vgrow>
-    </TableView>
-
-</VBox>
+    

@@ -16,20 +16,8 @@ import javafx.scene.control.Alert.AlertType;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-/**
- * Controlador FXML de la pestaña Pedidos.
- *
- * Gestiona:
- *   - Creación de pedidos (cliente debe existir previamente).
- *   - Eliminación con diálogo de confirmación.
- *   - Filtros combinados: por estado (todos/pendientes/enviados) y por email.
- *   - Tabla con código de colores: amarillo = pendiente, verde = enviado.
- *
- * El Controlador MVC se inyecta con setControlador() desde MainController.
- */
+/** Controlador FXML de la pestaña Pedidos. */
 public class PedidosController {
-
-    // ── Nodos inyectados desde pedidos.fxml ──────────────────────────────────
 
     @FXML private TextField txtEmailPedido;
     @FXML private TextField txtCodigoPedido;
@@ -52,24 +40,14 @@ public class PedidosController {
     @FXML private TableColumn<Pedido, String>  colFecha;
     @FXML private TableColumn<Pedido, String>  colEstado;
 
-    // ── Estado interno ────────────────────────────────────────────────────────
-
     private Controlador controlador;
     private final ObservableList<Pedido> datos = FXCollections.observableArrayList();
 
-    /** Filtro de estado activo: "todos" | "pendientes" | "enviados" */
     private String filtroEstado = "todos";
 
     private static final DateTimeFormatter FMT =
         DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    // ── Inicialización ────────────────────────────────────────────────────────
-
-    /**
-     * Inicializa las columnas de la tabla y el feedback del campo email.
-     * Las columnas no tienen PropertyValueFactory directa porque Pedido no
-     * expone JavaFX Properties; se usan SimpleProperty para calcularlo.
-     */
     @FXML
     public void initialize() {
         colNumero.setCellValueFactory(cd ->
@@ -103,7 +81,6 @@ public class PedidosController {
             new SimpleStringProperty(
                 cd.getValue().esCancelable() ? "⏳ Pendiente" : "✅ Enviado"));
 
-        // Filas con color según estado: amarillo = pendiente, verde = enviado
         tablaPedidos.setRowFactory(tv -> new TableRow<>() {
             @Override
             protected void updateItem(Pedido p, boolean empty) {
@@ -118,7 +95,6 @@ public class PedidosController {
             }
         });
 
-        // Listener en el campo email: busca el cliente al perder el foco
         txtEmailPedido.focusedProperty().addListener((obs, anterior, focused) -> {
             if (!focused && controlador != null) actualizarInfoCliente();
         });
@@ -126,25 +102,16 @@ public class PedidosController {
         tablaPedidos.setItems(datos);
     }
 
-    /** Inyecta el Controlador MVC y carga los datos iniciales. */
     public void setControlador(Controlador controlador) {
         this.controlador = controlador;
         refrescarTabla();
     }
 
-    // ── Manejadores de eventos ────────────────────────────────────────────────
-
-    /**
-     * Consulta el cliente al salir del campo email y actualiza el label
-     * informativo para dar feedback inmediato sin necesidad de botón extra.
-     */
     @FXML
     private void onEmailFocusLost() {
-        // También se llama desde el listener de focusedProperty en initialize()
         actualizarInfoCliente();
     }
 
-    /** Valida y crea el pedido mediante el Controlador MVC. */
     @FXML
     private void onCrearPedido() {
         String email   = txtEmailPedido.getText().trim();
@@ -201,10 +168,6 @@ public class PedidosController {
         lblInfoCliente.setText("");
     }
 
-    /**
-     * Elimina un pedido tras mostrar un diálogo de confirmación.
-     * Solo los pedidos pendientes (cancelables) se pueden eliminar.
-     */
     @FXML
     private void onEliminarPedido() {
         String numStr = txtNumeroPedido.getText().trim();
@@ -223,7 +186,6 @@ public class PedidosController {
             return;
         }
 
-        // Confirmación antes de borrar
         Alert confirm = new Alert(AlertType.CONFIRMATION);
         confirm.setTitle("Confirmar eliminación");
         confirm.setHeaderText("¿Eliminar pedido nº " + numero + "?");
@@ -243,8 +205,6 @@ public class PedidosController {
             alerta(AlertType.ERROR, "Error de persistencia", ex.getMessage());
         }
     }
-
-    // ── Filtros de estado ─────────────────────────────────────────────────────
 
     @FXML
     private void onFiltroTodos() {
@@ -278,12 +238,6 @@ public class PedidosController {
         refrescarTabla();
     }
 
-    // ── Utilidades privadas ───────────────────────────────────────────────────
-
-    /**
-     * Actualiza el label informativo con los datos del cliente
-     * cuyo email está escrito en el campo txtEmailPedido.
-     */
     private void actualizarInfoCliente() {
         String email = txtEmailPedido.getText().trim();
         if (email.isEmpty()) {
@@ -300,10 +254,6 @@ public class PedidosController {
         }
     }
 
-    /**
-     * Recarga la tabla combinando filtroEstado y el email del campo de filtro.
-     * Si el campo email está vacío no se aplica filtro por cliente.
-     */
     private void refrescarTabla() {
         String email = txtFiltroEmail.getText().trim();
         boolean hayEmail = !email.isEmpty();
@@ -329,7 +279,6 @@ public class PedidosController {
         }
     }
 
-    /** Resalta el botón de filtro activo y deja los demás en estilo neutro. */
     private void marcarActivo(Button activo, Button... inactivos) {
         activo.setStyle("-fx-padding: 6 14; -fx-background-color: #2980b9; -fx-text-fill: white;");
         for (Button b : inactivos) b.setStyle("-fx-padding: 6 14;");
@@ -344,3 +293,4 @@ public class PedidosController {
         alert.showAndWait();
     }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            

@@ -39,8 +39,6 @@ public class Menu {
         } while (opcion != 0);
     }
 
-    // ==================== MENÚ ARTÍCULOS ====================
-
     private void menuArticulos() {
         int opcion;
         do {
@@ -85,8 +83,6 @@ public class Menu {
             articulos.forEach(a -> System.out.println("  " + a));
         }
     }
-
-    // ==================== MENÚ CLIENTES ====================
 
     private void menuClientes() {
         int opcion;
@@ -134,7 +130,6 @@ public class Menu {
         }
     }
 
-    // Método genérico para mostrar cualquier lista
     private <T> void mostrarLista(List<T> lista, String titulo) {
         if (lista.isEmpty()) {
             System.out.println("\nNo hay elementos en: " + titulo);
@@ -143,8 +138,6 @@ public class Menu {
             lista.forEach(item -> System.out.println("  " + item));
         }
     }
-
-    // ==================== MENÚ PEDIDOS ====================
 
     private void menuPedidos() {
         int opcion;
@@ -255,8 +248,6 @@ public class Menu {
         mostrarLista(pedidos, "Pedidos Enviados");
     }
 
-    // ==================== UTILIDADES ====================
-
     private int leerEntero(String mensaje) {
         while (true) {
             try {
@@ -278,4 +269,4 @@ public class Menu {
             }
         }
     }
-}
+}                                                                                                                                                                                                                                                                                                                                
