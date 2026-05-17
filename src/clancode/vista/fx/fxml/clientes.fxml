@@ -90,4 +90,9 @@
             <TableColumn fx:id="colNombre"    text="Nombre"    prefWidth="150"/>
             <TableColumn fx:id="colNif"       text="NIF"       prefWidth="100"/>
             <TableColumn fx:id="colDomicilio" text="Domicilio" prefWidth="160"/>
-            <TableColumn fx:id="colTipo"      text="Tipo"      prefWidth=
+            <TableColumn fx:id="colTipo"      text="Tipo"      prefWidth="80"/>
+        </columns>
+        <VBox.vgrow>ALWAYS</VBox.vgrow>
+    </TableView>
+
+</VBox>
